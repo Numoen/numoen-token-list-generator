@@ -124,7 +124,7 @@ export const createAssetLaunchBanner = async (
     );
   }
 
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "black";
   ctx.fillText(
     token.symbol,
     startX + iconDim + 16,
@@ -140,9 +140,9 @@ export const createAssetLaunchBanner = async (
   ctx.fillRect(WIDTH / 2 - 203 / 2, 397, 203, 1);
 
   ctx.font = `semibold 29px Inter`;
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "black";
   ctx.textAlign = "center";
-  ctx.fillText("Now live on Saber", WIDTH / 2, 437 + 29);
+  ctx.fillText("Now live on Numoen", WIDTH / 2, 437 + 29);
 
   return {
     png: canvas.toBuffer("image/png", { compressionLevel: 9 }),
