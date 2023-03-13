@@ -361,6 +361,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@numoen/default-token-list@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@numoen/default-token-list@npm:0.0.1"
+  checksum: dd49cbd418aa2d8c2f703154214974c5d698a1acffd71b29a691541656a7ab27da15c0aff40f3ce0b924980c64c8fd62a02ab29c586f4db3f9dc55b6709d955b
+  languageName: node
+  linkType: hard
+
 "@rushstack/eslint-patch@npm:^1.2.0":
   version: 1.2.0
   resolution: "@rushstack/eslint-patch@npm:1.2.0"
@@ -400,6 +407,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@saberhq/saber-lp-token-list-generator@workspace:."
   dependencies:
+    "@numoen/default-token-list": "npm:^0.0.1"
     "@rushstack/eslint-patch": "npm:^1.2.0"
     "@saberhq/eslint-config": "npm:^2.1.0"
     "@saberhq/solana-contrib": "npm:^1.14.9"
@@ -411,6 +419,7 @@ __metadata:
     "@types/node": "npm:^18.11.7"
     "@types/prettier": "npm:^2.7.1"
     "@types/sharp": "npm:^0.31.0"
+    "@uniswap/token-lists": "npm:^1.0.0-beta.31"
     axios: "npm:^0.26.1"
     bn.js: "npm:^5.2.1"
     canvas: "npm:^2.10.1"
@@ -897,6 +906,13 @@ __metadata:
   peerDependencies:
     jsbi: ^3 || ^4
   checksum: 1ceb33a363b5e390c6b0b07aa964f5e78c76148f991228a4e5fdcbecbc73de09aefee80705aa0e6bc3801362abd4762ba5f8298a80385da4ec9b6d0e3d4c3fc8
+  languageName: node
+  linkType: hard
+
+"@uniswap/token-lists@npm:^1.0.0-beta.31":
+  version: 1.0.0-beta.31
+  resolution: "@uniswap/token-lists@npm:1.0.0-beta.31"
+  checksum: 877ae48c26064d569af463ff1eaa9b896c633a09e3d7a6141eee867b7abf10146b2226dd8e65c23542a525e5d95ab240abcbc89ff8a12257d4a16bf515d01ef4
   languageName: node
   linkType: hard
 

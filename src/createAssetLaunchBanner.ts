@@ -1,4 +1,4 @@
-import type { TokenInfo } from "@saberhq/token-utils";
+import type { TokenInfo } from "@uniswap/token-lists";
 import axios from "axios";
 import type { Image } from "canvas";
 import { createCanvas, loadImage, registerFont } from "canvas";
