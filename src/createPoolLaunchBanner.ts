@@ -50,10 +50,13 @@ const generateTokenImage = async ({
   return { colorStart: null, colorEnd: null, image: null };
 };
 
-export const createPoolLaunchBanner = async ([tokenA, tokenB]: readonly [
-  TokenInfo,
-  TokenInfo
-]): Promise<{ png: Buffer; jpg: Buffer }> => {
+export const createPoolLaunchBanner = async ({
+  quote,
+  base,
+}: {
+  base: TokenInfo;
+  quote: TokenInfo;
+}): Promise<{ png: Buffer; jpg: Buffer }> => {
   const launchBannerBG = await fs.readFile(`${__dirname}/launch-banner.svg`);
 
   registerFont(`${__dirname}/Inter-Bold.ttf`, {
@@ -75,10 +78,10 @@ export const createPoolLaunchBanner = async ([tokenA, tokenB]: readonly [
   ctx.patternQuality = "best";
 
   const tokenAImg = await generateTokenImage({
-    url: tokenA.logoURI,
+    url: quote.logoURI,
   });
   const tokenBImg = await generateTokenImage({
-    url: tokenB.logoURI,
+    url: base.logoURI,
   });
 
   const launchBannerStr = launchBannerBG
@@ -105,11 +108,11 @@ export const createPoolLaunchBanner = async ([tokenA, tokenB]: readonly [
   );
 
   ctx.font = `bold 48px Inter`;
-  const symbolSizeA = ctx.measureText(tokenA.symbol + " /");
+  const symbolSizeA = ctx.measureText(quote.symbol + " /");
   const textWidthA = symbolSizeA.width;
   const textHeightA = symbolSizeA.actualBoundingBoxAscent;
 
-  const symbolSizeB = ctx.measureText(tokenB.symbol);
+  const symbolSizeB = ctx.measureText(base.symbol);
   const textWidthB = symbolSizeB.width;
   const textHeightB = symbolSizeB.actualBoundingBoxAscent;
 
@@ -147,12 +150,12 @@ export const createPoolLaunchBanner = async ([tokenA, tokenB]: readonly [
 
   ctx.fillStyle = "white";
   ctx.fillText(
-    tokenA.symbol + " /",
+    quote.symbol + " /",
     startX + iconDim + 8,
     startY + iconDim - textHeightA / 2
   );
   ctx.fillText(
-    tokenB.symbol,
+    base.symbol,
     startX + iconDim + 8 + textWidthA + 8 + iconDim + 8,
     startY + iconDim - textHeightB / 2
   );
@@ -161,7 +164,7 @@ export const createPoolLaunchBanner = async ([tokenA, tokenB]: readonly [
   ctx.fillStyle = "#979EAF";
   ctx.textAlign = "center";
 
-  const subtitle = `${tokenA.name} / ${tokenB.name}`;
+  const subtitle = `${quote.name} / ${base.name}`;
   const expectedWidth = ctx.measureText(subtitle).width;
   const maxWidth = 771 - 24 * 2;
   if (expectedWidth > maxWidth) {
@@ -175,7 +178,7 @@ export const createPoolLaunchBanner = async ([tokenA, tokenB]: readonly [
   ctx.font = `semibold 29px Inter`;
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
-  ctx.fillText("Now live on Saber", WIDTH / 2, 437 + 29);
+  ctx.fillText("Now live on Numoen", WIDTH / 2, 437 + 29);
 
   return {
     png: canvas.toBuffer("image/png", { compressionLevel: 9 }),

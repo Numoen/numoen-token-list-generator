@@ -1,4 +1,4 @@
-import type { TokenInfo } from "@saberhq/token-utils";
+import type { TokenInfo } from "@uniswap/token-lists";
 import axios from "axios";
 import type { CanvasRenderingContext2D, Image } from "canvas";
 import { createCanvas, loadImage } from "canvas";
@@ -47,9 +47,13 @@ const drawSubImg = async ({
   }
 };
 
-export const createLPTokenIcon = async (
-  underlying: readonly [TokenInfo, TokenInfo]
-): Promise<{ png: Buffer; jpg: Buffer }> => {
+export const createPowerTokenIcon = async ({
+  quote,
+  base,
+}: {
+  base: TokenInfo;
+  quote: TokenInfo;
+}): Promise<{ png: Buffer; jpg: Buffer }> => {
   const canvas = createCanvas(DIMENSION, DIMENSION);
   const ctx = canvas.getContext("2d");
   ctx.quality = "best";
@@ -60,8 +64,8 @@ export const createLPTokenIcon = async (
   ctx.arc(DIMENSION / 2, DIMENSION / 2, DIMENSION / 2, 0, 2 * Math.PI);
   ctx.clip();
 
-  await drawSubImg({ ctx, url: underlying[0].logoURI, position: "a" });
-  await drawSubImg({ ctx, url: underlying[1].logoURI, position: "b" });
+  await drawSubImg({ ctx, url: quote.logoURI, position: "a" });
+  await drawSubImg({ ctx, url: base.logoURI, position: "b" });
 
   const mask = await loadImage(`${__dirname}/mask.svg`);
   ctx.drawImage(mask, 0, 0, DIMENSION, DIMENSION);

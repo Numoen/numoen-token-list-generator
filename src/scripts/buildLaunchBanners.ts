@@ -3,16 +3,13 @@ import * as fs from "fs/promises";
 
 import { createAssetLaunchBanner } from "../createAssetLaunchBanner";
 
-export const buildLaunchBanners = async (): Promise<void> => {
+export const buildLaunchBanners = async (chainID: number): Promise<void> => {
   const dir = `${__dirname}/../../data`;
-  await fs.mkdir(dir, { recursive: true });
-  await fs.mkdir(`${dir}/solana-token-list`, { recursive: true });
 
-  const bannersDir = `${dir}/banners-assets`;
+  const bannersDir = `${dir}/banners-assets/${chainID}`;
   await fs.mkdir(bannersDir, { recursive: true });
-  await fs.mkdir(`${dir}/lists/`, { recursive: true });
 
-  const tokens = NumoenList.tokens;
+  const tokens = NumoenList.tokens.filter((t) => t.chainId === chainID);
 
   await Promise.all(
     tokens.map(async (token) => {
@@ -23,7 +20,11 @@ export const buildLaunchBanners = async (): Promise<void> => {
   );
 };
 
-buildLaunchBanners().catch((err) => {
+Promise.all([
+  buildLaunchBanners(42161),
+  buildLaunchBanners(42220),
+  buildLaunchBanners(137),
+]).catch((err) => {
   console.error(err);
   process.exit(1);
 });

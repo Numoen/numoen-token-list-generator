@@ -1,159 +1,113 @@
-import type { Network } from "@saberhq/solana-contrib";
-import type { TokenInfo, TokenList } from "@saberhq/token-utils";
-import axios from "axios";
+import NumoenList from "@numoen/default-token-list";
+import { Fraction, Token } from "@uniswap/sdk-core";
+import type { TokenList, Version } from "@uniswap/token-lists";
 import * as fs from "fs/promises";
-import { uniqBy } from "lodash";
+import { GraphQLClient } from "graphql-request";
+import { getAddress } from "viem";
 
-import { createDecimalWrapperTokenIcon } from "../createDecimalWrapperTokenIcon";
-import { createLPTokenIcon } from "../createLPTokenIcon";
+import { createPowerTokenIcon } from "../createPowerTokenIcon";
+import { LendginesDocument } from "../gql/numoen/graphql";
+import { parseLendgines } from "../graphql/numoen";
+import { numoenSubgraphs } from "../lib/config";
+import { scale } from "../lib/constants";
+import type { Lendgine } from "../lib/lendgine";
+import { fractionToPrice } from "../lib/price";
+import { WrappedTokenInfo } from "../lib/wrappedTokenInfo";
 
-export interface PoolInfoRaw {
-  id: string;
-  name: string;
+export const buildTokenList = async (
+  chainID: keyof typeof numoenSubgraphs
+): Promise<void> => {
+  const client = new GraphQLClient(numoenSubgraphs[chainID]);
+  const lendgines = parseLendgines(await client.request(LendginesDocument));
 
-  tokens: readonly [TokenInfo, TokenInfo];
-  tokenIcons: readonly [TokenInfo, TokenInfo];
-  underlyingIcons: readonly [TokenInfo, TokenInfo];
-
-  currency: string;
-  lpToken: TokenInfo;
-  hidden?: boolean;
-  newPoolID?: string;
-}
-
-export const buildTokenList = async (network: Network): Promise<void> => {
-  const networkFmt = network === "mainnet-beta" ? "mainnet" : network;
-  const { data } = await axios.get<{ pools: PoolInfoRaw[] }>(
-    `https://raw.githubusercontent.com/saber-hq/saber-registry-dist/master/data/pools-info.${networkFmt}.json`
-  );
+  const { version } = JSON.parse(
+    (await fs.readFile(`${__dirname}/../../package.json`)).toString()
+  ) as {
+    version: Version;
+  };
 
   const dir = `${__dirname}/../../data`;
-  await fs.mkdir(dir, { recursive: true });
   await fs.mkdir(`${dir}/solana-token-list`, { recursive: true });
 
-  const assetsDir = `${dir}/assets/${networkFmt}`;
-  const assetsJpgDir = `${dir}/assets-jpg/${networkFmt}`;
+  const assetsDir = `${dir}/assets/${chainID}`;
+  const assetsJpgDir = `${dir}/assets-jpg/${chainID}`;
   await fs.mkdir(assetsDir, { recursive: true });
   await fs.mkdir(assetsJpgDir, { recursive: true });
   await fs.mkdir(`${dir}/lists/`, { recursive: true });
 
-  const lpTokens = await Promise.all(
-    data.pools.map(async (pool) => {
-      const { png, jpg } = await createLPTokenIcon(pool.underlyingIcons);
-      await fs.mkdir(`${assetsDir}/${pool.lpToken.address}`, {
-        recursive: true,
-      });
-      await fs.writeFile(`${assetsDir}/${pool.lpToken.address}/icon.png`, png);
-      await fs.writeFile(`${assetsJpgDir}/${pool.lpToken.address}.jpg`, jpg);
-      return {
-        ...pool.lpToken,
-        logoURI: `https://raw.githubusercontent.com/saber-hq/saber-lp-token-list/master/assets/${networkFmt}/${pool.lpToken.address}/icon.png`,
-      };
-    })
-  );
-  const lpTokenList: TokenList = {
-    name: `Saber LP Token List (${network})`,
-    logoURI:
-      "https://raw.githubusercontent.com/saber-hq/saber-lp-token-list/master/sbr.svg",
-    tags: {},
-    timestamp: new Date().toISOString(),
-    tokens: lpTokens.sort((a, b) => {
-      return a.address < b.address ? -1 : 1;
-    }),
-  };
-  await fs.writeFile(
-    `${dir}/lists/saber-lp.${network}.json`,
-    JSON.stringify(lpTokenList, null, 2)
-  );
-
-  const decimalWrappedTokens = await Promise.all(
-    uniqBy(
-      data.pools
-        .flatMap((pool) => pool.tokens)
-        .filter((tok) => tok.tags?.includes("saber-dec-wrapped")),
-      (v) => v.address
-    ).map(async (tok) => {
-      const { png, jpg } = await createDecimalWrapperTokenIcon(
-        tok,
-        tok.decimals
+  const validLendgines = lendgines
+    .map((l) => {
+      const token0 = NumoenList.tokens.find(
+        (t) => getAddress(t.address) === l.token0
       );
-      await fs.mkdir(`${assetsDir}/${tok.address}`, {
+      const token1 = NumoenList.tokens.find(
+        (t) => getAddress(t.address) === l.token1
+      );
+
+      if (!token0 || !token1) return undefined;
+
+      const lendgine = {
+        token0: new WrappedTokenInfo(token0),
+        token1: new WrappedTokenInfo(token1),
+        token0Exp: l.token0Exp,
+        token1Exp: l.token1Exp,
+
+        lendgine: new Token(chainID, l.address, 18),
+        address: l.address,
+
+        bound: fractionToPrice(
+          new Fraction(l.upperBound, scale),
+          new WrappedTokenInfo(token1),
+          new WrappedTokenInfo(token0)
+        ),
+      };
+      // TODO: validate lendgine
+
+      return lendgine;
+    })
+    .filter((l): l is Lendgine => !!l);
+
+  const powerTokens = await Promise.all(
+    validLendgines.map(async (l) => {
+      // TODO: lendgineToMarket
+      const { png, jpg } = await createPowerTokenIcon({
+        base: l.token0.tokenInfo,
+        quote: l.token1.tokenInfo,
+      });
+      await fs.mkdir(`${assetsDir}/${l.address}`, {
         recursive: true,
       });
-      await fs.writeFile(`${assetsDir}/${tok.address}/icon.png`, png);
-      await fs.writeFile(`${assetsJpgDir}/${tok.address}.jpg`, jpg);
-
-      const extensions = {
-        ...tok.extensions,
-        website: "https://app.saber.so",
-      };
-      delete extensions.assetContract;
-
-      const name =
-        tok.name.length > 50
-          ? tok.name.replace("Saber Wrapped", "Saber")
-          : tok.name;
-
+      await fs.writeFile(`${assetsDir}/${l.address}/icon.png`, png);
+      await fs.writeFile(`${assetsJpgDir}/${l.address}.jpg`, jpg);
+      // TODO: add name and symbol to token
       return {
-        ...tok,
-        name,
-        logoURI: `https://raw.githubusercontent.com/saber-hq/saber-lp-token-list/master/assets/${networkFmt}/${tok.address}/icon.png`,
-        tags: tok.tags?.map((t) =>
-          t === "saber-decimal-wrapped" ? "saber-dec-wrapped" : t
-        ),
-        extensions,
+        ...l.lendgine,
+        name: "name",
+        symbol: "symbol",
+        logoURI: `https://raw.githubusercontent.com/numoen/numoen-power-token-list/master/assets/${chainID}/${l.address}/icon.png`,
       };
     })
   );
-  const decimalWrapperTokenList: TokenList = {
-    name: `Saber Decimal Wrapped Token List (${network})`,
+
+  // TODO: add a version
+  const powerTokenList: TokenList = {
+    name: `Numoen Power Token List (${chainID})`,
     logoURI:
-      "https://raw.githubusercontent.com/saber-hq/saber-lp-token-list/master/sbr.svg",
+      "https://raw.githubusercontent.com/numoen/numoen-power-token-list/master/sbr.svg",
+    version: version,
     tags: {},
     timestamp: new Date().toISOString(),
-    tokens: decimalWrappedTokens.sort((a, b) => {
+    tokens: powerTokens.sort((a, b) => {
       return a.address < b.address ? -1 : 1;
     }),
   };
   await fs.writeFile(
-    `${dir}/lists/saber-wrapped.${network}.json`,
-    JSON.stringify(decimalWrapperTokenList, null, 2)
-  );
-
-  const tokensForSolanaTokenList = [...lpTokens, ...decimalWrappedTokens]
-    .sort((a, b) => (a.address < b.address ? -1 : 1))
-    .map((tok) => {
-      const logoURI = `https://raw.githubusercontent.com/solana-labs/token-list/main/assets/${networkFmt}/${tok.address}/icon.png`;
-      const theToken = {
-        ...tok,
-        name: tok.name.endsWith(" Saber LP")
-          ? `Saber ${tok.name.replace(/ Saber LP/g, " LP")}`
-          : tok.name,
-        symbol: tok.symbol.replace(/_/g, ""),
-        logoURI,
-      };
-      if (tok.extensions) {
-        const {
-          underlyingTokens: _underlyingTokens,
-          source: _source,
-          sourceUrl: _sourceUrl,
-          currency: _currency,
-          ...extensions
-        } = tok.extensions;
-        return { ...theToken, extensions };
-      }
-      return theToken;
-    });
-
-  await fs.writeFile(
-    `${dir}/solana-token-list/tokens.${network}.json`,
-    JSON.stringify(tokensForSolanaTokenList, null, 2)
+    `${dir}/lists/numoen-power-token.${chainID}.json`,
+    JSON.stringify(powerTokenList, null, 2)
   );
 };
 
-Promise.all([buildTokenList("mainnet-beta"), buildTokenList("devnet")]).catch(
-  (err) => {
-    console.error(err);
-    process.exit(1);
-  }
-);
+Promise.all([buildTokenList(42161), buildTokenList(42220)]).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

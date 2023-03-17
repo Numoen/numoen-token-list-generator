@@ -8,3 +8,6 @@
 
 .eslintcache
 data/
+
+gql/
+node_modules
