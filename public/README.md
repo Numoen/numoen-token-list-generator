@@ -1,18 +1,13 @@
-# Saber LP Token List
+# Numoen Power Token List Generator
 
-Official [token list](https://github.com/Uniswap/token-lists) of Saber LP tokens.
+Generates the token list of Numoen Power tokens.
 
-This list is automatically updated whenever new pools are added to Saber.
-
-## Directory Structure
-
-- `assets/{network}` -- PNG icons.
-- `assets-jpg/{network}` -- JPEG icons. These may be better for lower bandwidth environments.
-- `banners-pools/{network}` -- Banners of pool launches.
-- `banners-assets/{network}` -- Banners of asset launches.
-- `lists/saber-lp.{network}.json` -- Token lists to use in your application.
-- `solana-token-list/tokens.{network}.json` -- Array of tokens meant to be added to the [official Solana Labs token list](https://github.com/solana-labs/token-list).
+```sh
+yarn install
+yarn graphql-codegen
+yarn build
+```
 
 ## License
 
-Apache 2.0.
+AGPL-3.0

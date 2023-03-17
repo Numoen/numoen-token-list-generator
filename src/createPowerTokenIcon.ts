@@ -18,7 +18,7 @@ const drawSubImg = async ({
   try {
     let image: Image | null = null;
     if (!url) {
-      image = await loadImage(`${__dirname}/../public/sbr.svg`);
+      image = await loadImage(`${__dirname}/../public/numoen.svg`);
     } else {
       const { data: iconData } = await axios.get<Buffer>(url, {
         responseType: "arraybuffer",

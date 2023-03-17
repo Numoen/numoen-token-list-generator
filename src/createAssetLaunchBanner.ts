@@ -23,7 +23,7 @@ const drawImage = async ({
     let colorStart: string | null = null;
     let colorEnd: string | null = null;
     if (!url) {
-      image = await loadImage(`${__dirname}/../public/sbr.svg`);
+      image = await loadImage(`${__dirname}/../public/numoen.svg`);
     } else {
       const { data: iconData } = await axios.get<Buffer>(url, {
         responseType: "arraybuffer",

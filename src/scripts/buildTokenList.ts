@@ -27,7 +27,6 @@ export const buildTokenList = async (
   };
 
   const dir = `${__dirname}/../../data`;
-  await fs.mkdir(`${dir}/solana-token-list`, { recursive: true });
 
   const assetsDir = `${dir}/assets/${chainID}`;
   const assetsJpgDir = `${dir}/assets-jpg/${chainID}`;
@@ -93,7 +92,7 @@ export const buildTokenList = async (
   const powerTokenList: TokenList = {
     name: `Numoen Power Token List (${chainID})`,
     logoURI:
-      "https://raw.githubusercontent.com/numoen/numoen-power-token-list/master/sbr.svg",
+      "https://raw.githubusercontent.com/numoen/numoen-power-token-list/master/numoen.svg",
     version: version,
     tags: {},
     timestamp: new Date().toISOString(),

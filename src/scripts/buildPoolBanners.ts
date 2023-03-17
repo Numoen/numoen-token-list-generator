@@ -1,6 +1,6 @@
 import NumoenList from "@numoen/default-token-list";
-import type { TokenInfo } from "@saberhq/token-utils";
 import { Fraction, Token } from "@uniswap/sdk-core";
+import type { TokenInfo } from "@uniswap/token-lists";
 import * as fs from "fs/promises";
 import { GraphQLClient } from "graphql-request";
 import { getAddress } from "viem";

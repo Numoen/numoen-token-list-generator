@@ -1,4 +1,4 @@
-import type { TokenInfo } from "@saberhq/token-utils";
+import type { TokenInfo } from "@uniswap/token-lists";
 import axios from "axios";
 import type { Image } from "canvas";
 import { createCanvas, loadImage, registerFont } from "canvas";
@@ -23,7 +23,7 @@ const generateTokenImage = async ({
     let colorStart: string | null = null;
     let colorEnd: string | null = null;
     if (!url) {
-      image = await loadImage(`${__dirname}/../public/sbr.svg`);
+      image = await loadImage(`${__dirname}/../public/numoen.svg`);
     } else {
       const { data: iconData } = await axios.get<Buffer>(url, {
         responseType: "arraybuffer",
