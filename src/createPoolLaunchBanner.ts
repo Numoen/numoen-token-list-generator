@@ -148,7 +148,7 @@ export const createPoolLaunchBanner = async ({
     );
   }
 
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "black";
   ctx.fillText(
     quote.symbol + " /",
     startX + iconDim + 8,
@@ -161,7 +161,7 @@ export const createPoolLaunchBanner = async ({
   );
 
   ctx.font = `medium 28px Inter`;
-  ctx.fillStyle = "#979EAF";
+  ctx.fillStyle = "#707070";
   ctx.textAlign = "center";
 
   const subtitle = `${quote.name} / ${base.name}`;
@@ -172,11 +172,11 @@ export const createPoolLaunchBanner = async ({
   }
   ctx.fillText(subtitle, WIDTH / 2, 321 + 34, 771 - 24 * 2);
 
-  ctx.fillStyle = "#222324";
+  ctx.fillStyle = "#EFEFEF";
   ctx.fillRect(WIDTH / 2 - 203 / 2, 397, 203, 1);
 
   ctx.font = `semibold 29px Inter`;
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "black";
   ctx.textAlign = "center";
   ctx.fillText("Now live on Numoen", WIDTH / 2, 437 + 29);
 

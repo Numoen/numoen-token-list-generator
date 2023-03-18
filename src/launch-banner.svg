@@ -1,12 +1,12 @@
 <svg width="1200" height="628" viewBox="0 0 1200 628" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0_1491_8965)">
-        <rect width="1200" height="628" fill="#d9d9d9" />
+        <rect width="1200" height="628" fill="#FAFAFA" />
         <g clip-path="url(#clip1_1491_8965)" filter="url(#filter0_d_1491_8965)">
             <g filter="url(#filter1_f_1491_8965)">
 
             </g>
 
-            <rect x="216.031" y="190.031" width="767.587" height="361.939" rx="14.2146" fill="#fffffe" />
+            <rect x="216.031" y="190.031" width="767.587" height="361.939" rx="14.2146" fill="#ffffff" />
             <rect x="216.031" y="190.031" width="767.587" height="361.939" rx="14.2146"
                 stroke="url(#paint0_linear_1491_8965)" stroke-width="4.06131" />
         </g>
