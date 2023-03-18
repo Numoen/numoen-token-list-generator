@@ -132,11 +132,11 @@ export const createAssetLaunchBanner = async (
   );
 
   ctx.font = `medium 28px Inter`;
-  ctx.fillStyle = "#979EAF";
+  ctx.fillStyle = "#707070";
   ctx.textAlign = "center";
   ctx.fillText(token.name, WIDTH / 2, 321 + 34);
 
-  ctx.fillStyle = "#222324";
+  ctx.fillStyle = "#efefef";
   ctx.fillRect(WIDTH / 2 - 203 / 2, 397, 203, 1);
 
   ctx.font = `semibold 29px Inter`;
