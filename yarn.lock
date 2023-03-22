@@ -1666,10 +1666,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@numoen/default-token-list@npm:0.0.5":
-  version: 0.0.5
-  resolution: "@numoen/default-token-list@npm:0.0.5"
-  checksum: 551056221475d5bb28e5eb0e67811b43d97c263187b1f052a84853ff531d7f405435325ba3af31cebbea9e95e8b7f03c534f7a3325dc2ff1d30e5d88737cb198
+"@numoen/default-token-list@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@numoen/default-token-list@npm:0.0.6"
+  checksum: fbe5aa21648f0d02ff306c8953c0da8d82dec9f162c67e41bda8912ed8b8728c34e27a59b2d04c8ede09fc365758a4a24505c4c6ebd854245ef62691878e2bae
   languageName: node
   linkType: hard
 
@@ -1680,7 +1680,7 @@ __metadata:
     "@graphql-codegen/cli": "npm:^3.2.2"
     "@graphql-codegen/client-preset": "npm:^2.1.1"
     "@graphql-typed-document-node/core": "npm:^3.1.2"
-    "@numoen/default-token-list": "npm:0.0.5"
+    "@numoen/default-token-list": "npm:^0.0.6"
     "@rushstack/eslint-patch": "npm:^1.2.0"
     "@saberhq/eslint-config": "npm:^2.1.0"
     "@types/eslint": "npm:^8.4.8"
